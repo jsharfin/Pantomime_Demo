@@ -11,8 +11,23 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Media3D;
+    using System.Windows.Controls;
+    using System.Windows.Data;
     using Microsoft.Kinect;
 
+    public enum GamePhase
+    {
+        StartScreen = 0,
+        Instrucitons = 1,
+        Exercise = 2,
+        Summary = 3
+    }
+
+    public enum Exercise
+    {
+        BicepCurl = 0,
+        LateralRaise = 1
+    }
 
     public class Angles
     {
@@ -53,6 +68,17 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     /// </summary>
     public partial class MainWindow : Window
     {
+        private GamePhase _CurrentPhase;
+        private Exercise _CurrentExercise;
+        private int _CurrentSet;
+        private int _CurrentRep;
+
+        /// <summary>
+        /// Reserved for 
+        /// </summary>
+        private int _InstructionPosition;
+        private UIElement[] _InstructionSequence;
+
         /// <summary>
         /// Width of output drawing
         /// </summary>
@@ -124,6 +150,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         public MainWindow()
         {
             InitializeComponent();
+            _CurrentPhase = GamePhase.StartScreen;
+            _CurrentRep = 0;
+            _CurrentSet = 0;
         }
 
         /// <summary>
@@ -252,6 +281,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private void SensorSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             Skeleton[] skeletons = new Skeleton[0];
+            Skeleton primeSkeleton = null;
 
             using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
             {
@@ -259,39 +289,40 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 {
                     skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
                     skeletonFrame.CopySkeletonDataTo(skeletons);
-                }
-            }
-
-            using (DrawingContext dc = this.drawingGroup.Open())
-            {
-                // Draw a transparent background to set the render size
-                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-
-                if (skeletons.Length != 0)
-                {
-                    foreach (Skeleton skel in skeletons)
+                    foreach(Skeleton skeleton in skeletons)
                     {
-                        RenderClippedEdges(skel, dc);
-
-                        if (skel.TrackingState == SkeletonTrackingState.Tracked)
+                        if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
                         {
-                            this.DrawBonesAndJoints(skel, dc);
-                        }
-                        else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
-                        {
-                            dc.DrawEllipse(
-                            this.centerPointBrush,
-                            null,
-                            this.SkeletonPointToScreen(skel.Position),
-                            BodyCenterThickness,
-                            BodyCenterThickness);
+                            primeSkeleton = skeleton;
+                            break;
                         }
                     }
-                }
 
-                // prevent drawing outside of our render area
-                this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+                }
             }
+
+            if(primeSkeleton == null)
+            {
+                ChangePhase(GamePhase.StartScreen);
+            }
+
+            else
+            {
+
+                    TrackHand(primeSkeleton.Joints[JointType.HandLeft], HandElement, layoutGrid);
+
+                    switch (this._CurrentPhase)
+                    {
+                        case GamePhase.StartScreen:
+                            ProcessStartScreen(primeSkeleton);
+                            break;
+
+                        case GamePhase.Exercise:
+                            ProcessPlayerExercising(skeletons);
+                            break;
+                    }
+                
+             }
         }
 
         /// <summary>
@@ -434,6 +465,176 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     this.sensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default;
                 }
             }
+        }
+
+        /// <summary> 
+        /// Handles the StartScreen phase of the game 
+        ///  -----NEED TO SOMEHOW EXPAND SKELETON AREA TO WHOLE SCREEN
+        /// </summary>
+        private void ProcessStartScreen(Skeleton skeleton)
+        {
+            HandElement.Visibility = Visibility.Visible;
+            BicepCurlBox.Visibility = Visibility.Visible;
+            LateralRaiseBox.Visibility = Visibility.Visible;
+            //Determine if the user triggers the start of a new game
+            if (GetHitTarget(skeleton.Joints[JointType.HandLeft], BicepCurlBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], BicepCurlBox) != null)
+            {
+             //   ChangePhase(GamePhase.Exercise);
+                _CurrentExercise = Exercise.BicepCurl;
+                _CurrentPhase = GamePhase.Exercise;
+
+            }
+
+            else if (GetHitTarget(skeleton.Joints[JointType.HandLeft], LateralRaiseBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], LateralRaiseBox) != null)
+            {
+             //   ChangePhase(GamePhase.Exercise);
+                _CurrentExercise = Exercise.LateralRaise;
+                _CurrentPhase = GamePhase.Exercise;
+            }
+        }
+
+        private IInputElement GetHitTarget(Joint joint, UIElement target)
+        {
+            Point targetPoint = GetJointPoint(joint, layoutGrid);
+            targetPoint = layoutGrid.TranslatePoint(targetPoint, target);
+            return target.InputHitTest(targetPoint);
+        }
+
+        /// <summary>
+        /// maps point in depth stream to grid coordinate system
+        /// </summary>
+        /// <param name="joint"></param>
+        /// <param name="grid"></param>
+        /// <returns></returns>
+        private Point GetJointPoint(Joint joint, Grid grid)
+        {
+            DepthImagePoint point = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
+            point.X *= (int)grid.ActualWidth / sensor.DepthStream.FrameWidth;
+            point.Y *= (int)grid.ActualHeight / sensor.DepthStream.FrameHeight;
+
+            return new Point(point.X, point.Y);
+        }
+
+        /// <summary>
+        /// Trackes the position of the users hand on the screen with a cursor icon
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <param name="handCursorElement"></param>
+        /// <param name="grid"></param>
+        private void TrackHand(Joint hand, Image handCursorElement, Grid grid)
+        {
+            if (hand.TrackingState == JointTrackingState.NotTracked)
+            {
+                handCursorElement.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                handCursorElement.Visibility = Visibility.Visible;
+
+                float x;
+                float y;
+
+                DepthImagePoint point = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(hand.Position, DepthImageFormat.Resolution640x480Fps30);
+
+               point.X = (int)((point.X * grid.ActualWidth / sensor.DepthStream.FrameWidth) - (handCursorElement.ActualWidth / 2.0));
+
+                point.Y = (int)((point.Y * grid.ActualHeight / sensor.DepthStream.FrameHeight) - (handCursorElement.ActualHeight / 2.0));
+
+                x = point.X;
+                y = point.Y;
+
+              
+                
+                Canvas.SetLeft(handCursorElement, x);
+                Canvas.SetTop(handCursorElement, y);
+            }
+        }
+
+        /// <summary>
+        /// Process game state: Exercising
+        /// Shows skeleton and joint data
+        /// </summary>
+        /// <param name="skeletons"></param>
+        private void ProcessPlayerExercising(Skeleton[] skeletons)
+        {
+            HandElement.Visibility = Visibility.Collapsed;
+            BicepCurlBox.Visibility = Visibility.Hidden;
+            LateralRaiseBox.Visibility = Visibility.Hidden;
+            using (DrawingContext dc = this.drawingGroup.Open())
+            {
+                // Draw a transparent background to set the render size
+                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+
+                if (skeletons.Length != 0)
+                {
+                    foreach (Skeleton skel in skeletons)
+                    {
+                        RenderClippedEdges(skel, dc);
+
+                        if (skel.TrackingState == SkeletonTrackingState.Tracked)
+                        {
+                            this.DrawBonesAndJoints(skel, dc);
+                        }
+                        else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
+                        {
+                            dc.DrawEllipse(
+                            this.centerPointBrush,
+                            null,
+                            this.SkeletonPointToScreen(skel.Position),
+                            BodyCenterThickness,
+                            BodyCenterThickness);
+                        }
+                    }
+                }
+
+                // prevent drawing outside of our render area
+                this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+            }
+        }
+
+        private void ChangePhase(GamePhase newPhase)
+        {
+            if (newPhase != this._CurrentPhase)
+            {
+                this._CurrentPhase = newPhase;
+
+                switch (this._CurrentPhase)
+                {
+                    case GamePhase.StartScreen:
+                        this._CurrentRep = 0;
+                        this._CurrentSet = 0;
+                        /*    RedBlock.Opacity = 0.2;
+                            BlueBlock.Opacity = 0.2;
+                            GreenBlock.Opacity = 0.2;
+                            YellowBlock.Opacity = 0.2;
+
+                            GameStateElement.Text = "GameOver!";
+                            ControlCanvas.Visibility = Visibility.Visible;
+                            GameInstructionsElement.Text = "Place hands over the targets to start a new game";
+                           */
+                        break;
+
+                    case GamePhase.Instrucitons:
+                        /*  this._CurrentLevel++;
+                          GameStateElement.Text = string.Format("Level {0}", this._CurrentLevel);
+                          ControlCanvas.Visibility = Visibility.Collapsed;
+                          GameInstructionsElement.Text = "Watch for Simon's instructions";
+                          GenerateInstructions();
+                          DisplayInstructions();
+                         */
+                        break;
+
+                    case GamePhase.Exercise:
+                        this._InstructionPosition = 0;
+                      //  GameInstructionsElement.Text = "Repeat Simon's instructions";
+                        break;
+                }
+            }
+        }
+
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
