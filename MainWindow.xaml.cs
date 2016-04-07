@@ -289,15 +289,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 {
                     skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
                     skeletonFrame.CopySkeletonDataTo(skeletons);
-                    foreach(Skeleton skeleton in skeletons)
-                    {
-                        if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
-                        {
-                            primeSkeleton = skeleton;
-                            break;
-                        }
-                    }
-
+                    primeSkeleton = GetPrimarySkeleton(skeletons);
                 }
             }
 
@@ -307,22 +299,55 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
 
             else
+             {
+
+                     TrackHand(primeSkeleton.Joints[JointType.HandLeft], HandElement, layoutGrid);
+
+                     switch (this._CurrentPhase)
+                     {
+                         case GamePhase.StartScreen:
+                             ProcessStartScreen(primeSkeleton);
+                             break;
+
+                         case GamePhase.Exercise:
+                             ProcessPlayerExercising(skeletons);
+                             break;
+                     }
+
+              } 
+        }
+
+        /// <summary>
+        /// Takes in a skeleton array and returns the skeleton closest to the kinect
+        /// </summary>
+        /// <param name="skeletons"></param>
+        /// <returns></returns>
+        private static Skeleton GetPrimarySkeleton(Skeleton[] skeletons)
+        {
+            Skeleton skeleton = null;
+
+            if (skeletons != null)
             {
-
-                    TrackHand(primeSkeleton.Joints[JointType.HandLeft], HandElement, layoutGrid);
-
-                    switch (this._CurrentPhase)
+                //Find closest skeleton
+                for (int i = 0; i < skeletons.Length; i++)
+                {
+                    if (skeletons[i].TrackingState == SkeletonTrackingState.Tracked)
                     {
-                        case GamePhase.StartScreen:
-                            ProcessStartScreen(primeSkeleton);
-                            break;
-
-                        case GamePhase.Exercise:
-                            ProcessPlayerExercising(skeletons);
-                            break;
+                        if (skeleton == null)
+                        {
+                            skeleton = skeletons[i];
+                        }
+                        else
+                        {
+                            if (skeleton.Position.Z > skeletons[i].Position.Z)
+                            {
+                                skeleton = skeletons[i];
+                            }
+                        }
                     }
-                
-             }
+                }
+            }
+            return skeleton;
         }
 
         /// <summary>
