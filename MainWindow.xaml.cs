@@ -33,43 +33,13 @@ namespace PantomimeDemo
         LateralRaise = 1
     }
 
-    public class Angles
-    {
-        public double AngleBetweenTwoVectors(Vector3D vectorA, Vector3D vectorB)
-        {
-            double dotProduct;
-            vectorA.Normalize();
-            vectorB.Normalize();
-            dotProduct = Vector3D.DotProduct(vectorA, vectorB);
 
-            return (double)Math.Acos(dotProduct) / Math.PI * 180;
-        }
-
-        public byte[] GetVector(Skeleton skeleton)
-        {
-            Vector3D ShoulderCenter = new Vector3D(skeleton.Joints[JointType.ShoulderCenter].Position.X, skeleton.Joints[JointType.ShoulderCenter].Position.Y, skeleton.Joints[JointType.ShoulderCenter].Position.Z);
-            Vector3D RightShoulder = new Vector3D(skeleton.Joints[JointType.ShoulderRight].Position.X, skeleton.Joints[JointType.ShoulderRight].Position.Y, skeleton.Joints[JointType.ShoulderRight].Position.Z);
-            Vector3D LeftShoulder = new Vector3D(skeleton.Joints[JointType.ShoulderLeft].Position.X, skeleton.Joints[JointType.ShoulderLeft].Position.Y, skeleton.Joints[JointType.ShoulderLeft].Position.Z);
-            Vector3D RightElbow = new Vector3D(skeleton.Joints[JointType.ElbowRight].Position.X, skeleton.Joints[JointType.ElbowRight].Position.Y, skeleton.Joints[JointType.ElbowRight].Position.Z);
-            Vector3D LeftElbow = new Vector3D(skeleton.Joints[JointType.ElbowLeft].Position.X, skeleton.Joints[JointType.ElbowLeft].Position.Y, skeleton.Joints[JointType.ElbowLeft].Position.Z);
-            Vector3D RightWrist = new Vector3D(skeleton.Joints[JointType.WristRight].Position.X, skeleton.Joints[JointType.WristRight].Position.Y, skeleton.Joints[JointType.WristRight].Position.Z);
-            Vector3D LeftWrist = new Vector3D(skeleton.Joints[JointType.WristLeft].Position.X, skeleton.Joints[JointType.WristLeft].Position.Y, skeleton.Joints[JointType.WristLeft].Position.Z);
-            Vector3D UpVector = new Vector3D(0.0, 1.0, 0.0);
-
-            double AngleRightElbow = AngleBetweenTwoVectors(RightElbow - RightShoulder, RightElbow - RightWrist);
-            double AngleRightShoulder = AngleBetweenTwoVectors(UpVector, RightShoulder - RightElbow);
-            double AngleLeftElbow = AngleBetweenTwoVectors(LeftElbow - LeftShoulder, LeftElbow - LeftWrist);
-            double AngleLeftShoulder = AngleBetweenTwoVectors(UpVector, LeftShoulder - LeftElbow);
-
-
-            byte[] Angles = { Convert.ToByte(AngleRightElbow), Convert.ToByte(AngleRightShoulder), Convert.ToByte(AngleLeftElbow), Convert.ToByte(AngleLeftShoulder) };
-            return Angles;
-        }
-    }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+
     public partial class MainWindow : Window
     {
         private GamePhase _CurrentPhase;
@@ -405,86 +375,7 @@ namespace PantomimeDemo
             return skeleton;
         }
 
-        /// <summary>
-        /// Draws a skeleton's bones and joints
-        /// </summary>
-        /// <param name="skeleton">skeleton to draw</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext, Byte[] ReadyAngles)
-        {
-            // Render Torso
-           // this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderRight);
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.Spine);
-            this.DrawBone(skeleton, drawingContext, JointType.Spine, JointType.HipCenter);
-            this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
-
-            // Left Arm
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
-
-            // Right Arm
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
-            this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
-            this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
-
-            // Left Leg
-            this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.AnkleLeft, JointType.FootLeft);
-
-            // Right Leg
-            this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight);
-            this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight);
-            this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight);
-
-            // Render Joints
-            foreach (Joint joint in skeleton.Joints)
-            {
-                Brush drawBrush = null;
-
-                if (joint.TrackingState == JointTrackingState.Tracked)
-                {
-                    drawBrush = this.trackedJointBrush;
-                }
-                else if (joint.TrackingState == JointTrackingState.Inferred)
-                {
-                    drawBrush = this.inferredJointBrush;
-                }
-
-                if (drawBrush != null)
-                {
-                    Brush jointBrush = null;
-                    if (ReadyAngles[0] < 50)
-                    {
-                        jointBrush = Brushes.LawnGreen;
-                    }
-                    else
-                    {
-                        jointBrush = Brushes.Red;
-                    }
-                    FormattedText RE = new FormattedText(ReadyAngles[0].ToString(), System.Globalization.CultureInfo.GetCultureInfo("en-us"), System.Windows.FlowDirection.LeftToRight, new Typeface("Tahoma"), 20, jointBrush);
-                    FormattedText LE = new FormattedText(ReadyAngles[2].ToString(), System.Globalization.CultureInfo.GetCultureInfo("en-us"), System.Windows.FlowDirection.LeftToRight, new Typeface("Tahoma"), 20, jointBrush);
-                    byte[] SequenceStart = { 255 };
-                    if (joint.JointType == JointType.ElbowRight)
-                    {
-                        drawingContext.DrawText(RE, this.SkeletonPointToScreen(joint.Position));
-                    }
-                    else if (joint.JointType == JointType.ElbowLeft)
-                    {
-                        drawingContext.DrawText(LE, this.SkeletonPointToScreen(joint.Position));
-                    }
-                    else
-                    {
-                        drawingContext.DrawEllipse(drawBrush, null, this.SkeletonPointToScreen(joint.Position), JointThickness, JointThickness);
-                    }
-                }
-            }
-        }
-
+   
         /// <summary>
         /// Maps a SkeletonPoint to lie within our render space and converts to Point
         /// </summary>
@@ -498,41 +389,7 @@ namespace PantomimeDemo
             return new Point(depthPoint.X, depthPoint.Y);
         }
 
-        /// <summary>
-        /// Draws a bone line between two joints
-        /// </summary>
-        /// <param name="skeleton">skeleton to draw bones from</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        /// <param name="jointType0">joint to start drawing from</param>
-        /// <param name="jointType1">joint to end drawing at</param>
-        private void DrawBone(Skeleton skeleton, DrawingContext drawingContext, JointType jointType0, JointType jointType1)
-        {
-            Joint joint0 = skeleton.Joints[jointType0];
-            Joint joint1 = skeleton.Joints[jointType1];
-
-            // If we can't find either of these joints, exit
-            if (joint0.TrackingState == JointTrackingState.NotTracked ||
-                joint1.TrackingState == JointTrackingState.NotTracked)
-            {
-                return;
-            }
-
-            // Don't draw if both points are inferred
-            if (joint0.TrackingState == JointTrackingState.Inferred &&
-                joint1.TrackingState == JointTrackingState.Inferred)
-            {
-                return;
-            }
-
-            // We assume all drawn bones are inferred unless BOTH joints are tracked
-            Pen drawPen = this.inferredBonePen;
-            if (joint0.TrackingState == JointTrackingState.Tracked && joint1.TrackingState == JointTrackingState.Tracked)
-            {
-                drawPen = this.trackedBonePen;
-            }
-
-            drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
-        }
+      
 
         /// <summary>
         /// Handles the checking or unchecking of the seated mode combo box
@@ -561,12 +418,7 @@ namespace PantomimeDemo
         /// <param name="skeleton"></param>
         private void ProcessLogIn(Skeleton skeleton)
         {
-            HandElement.Visibility = Visibility.Visible;
-            BicepCurlBox.Visibility = Visibility.Hidden;
-            LateralRaiseBox.Visibility = Visibility.Hidden;
-            VidFeed.Visibility = Visibility.Hidden;
-            DisplayArea.Visibility = Visibility.Hidden;
-            ScanBarcode.Visibility = Visibility;
+           
             _CurrentRep = 0;
             
             if (GetHitTarget(skeleton.Joints[JointType.HandLeft],ScanBarcode) != null)
@@ -606,10 +458,7 @@ namespace PantomimeDemo
         /// </summary>
         private void ProcessStartScreen(Skeleton skeleton)
         {
-            HandElement.Visibility = Visibility.Visible;
-            BicepCurlBox.Visibility = Visibility.Visible;
-            LateralRaiseBox.Visibility = Visibility.Visible;
-            ScanBarcode.Visibility = Visibility.Hidden;
+
             _CurrentRep = 0;
             //Determine if the user triggers the start of a new game
             if (GetHitTarget(skeleton.Joints[JointType.HandLeft], BicepCurlBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], BicepCurlBox) != null)
@@ -701,70 +550,7 @@ namespace PantomimeDemo
             }
         }
 
-        /// <summary>
-        /// Process game state: Exercising
-        /// Shows skeleton and joint data
-        /// </summary>
-        /// <param name="skeletons"></param>
-        private void ProcessPlayerExercising(Skeleton skel, Exercise exercise)
-        {
-            HandElement.Visibility = Visibility.Collapsed;
-            BicepCurlBox.Visibility = Visibility.Hidden;
-            LateralRaiseBox.Visibility = Visibility.Hidden;
-            ScanBarcode.Visibility = Visibility.Hidden;
-
-            // Write the pixel data into our bitmap
-            this.vidSource.WritePixels(
-                new Int32Rect(0, 0, this.vidSource.PixelWidth, this.vidSource.PixelHeight),
-                this.colorPixels,
-                this.vidSource.PixelWidth * sizeof(int),
-                0);
-
-            using (DrawingContext dc = this.drawingGroup.Open())
-            {
-                // Draw a transparent background to set the render size
-                dc.DrawRectangle(Brushes.Transparent, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-                           
-                RenderClippedEdges(skel, dc);
-                Angles MyAngles = new Angles();
-                byte[] ReadyAngles = MyAngles.GetVector(skel);
-
-                if (skel.TrackingState == SkeletonTrackingState.Tracked)
-                {
-                    this.DrawBonesAndJoints(skel, dc, ReadyAngles);
-                }
-                else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
-                {
-                    dc.DrawEllipse(
-                    this.centerPointBrush,
-                    null,
-                    this.SkeletonPointToScreen(skel.Position),
-                    BodyCenterThickness,
-                    BodyCenterThickness);
-                }
-                switch (exercise)
-                {
-                    case Exercise.BicepCurl:
-                        if(ReadyAngles[0] < _AngExEnd && ReadyAngles[2] < _AngExEnd)
-                        {
-                            _ExState = true;
-                        }
-                        if(ReadyAngles[0] > _AngStart && ReadyAngles[2] > _AngStart && _ExState == true)
-                        {
-                            _ExState = false;
-                            _CurrentRep += 1;                          
-                            RepCountBox.Text = _CurrentRep.ToString();
-                        }
-                        break;
-
-                    case Exercise.LateralRaise:
-                        break;
-                }
-
-                // prevent drawing outside of our render area
-                this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));  
-            }
-        }
+     
 
         private void ChangePhase(GamePhase newPhase)
         {
@@ -776,34 +562,20 @@ namespace PantomimeDemo
                 {
                     case GamePhase.LogIn:
                         ScanBarcode.Visibility = Visibility.Visible;
-                        BicepCurlBox.Visibility = Visibility.Hidden;
-                        LateralRaiseBox.Visibility = Visibility.Hidden;
+                        MenuCanvas.Visibility = Visibility.Collapsed;
+                        WorkoutCanvas.Visibility = Visibility.Collapsed;
                         HandElement.Visibility = Visibility.Visible;
-                        VidFeed.Visibility = Visibility.Hidden;
-                        DisplayArea.Visibility = Visibility.Hidden;
-                        LaunchDashboard.Visibility = Visibility.Hidden;
-                        SetCountBox.Visibility = Visibility.Hidden;
-                        SetCountLabel.Visibility = Visibility.Hidden;
-                        RepCountBox.Visibility = Visibility.Hidden;
-                        RepCountLabel.Visibility = Visibility.Hidden;
-                        FinishWorkout.Visibility = Visibility.Hidden;
                         break;
 
                     case GamePhase.StartScreen:
                         this._CurrentRep = 0;
                         this._CurrentSet = 0;
+                        
                         ScanBarcode.Visibility = Visibility.Hidden;
-                        BicepCurlBox.Visibility = Visibility.Visible;
-                        LateralRaiseBox.Visibility = Visibility.Visible;
-                        LaunchDashboard.Visibility = Visibility.Visible;
+                        MenuCanvas.Visibility = Visibility.Visible;
+                        WorkoutCanvas.Visibility = Visibility.Collapsed;
                         HandElement.Visibility = Visibility.Visible;
-                        VidFeed.Visibility = Visibility.Hidden;
-                        DisplayArea.Visibility = Visibility.Hidden;
-                        SetCountBox.Visibility = Visibility.Hidden;
-                        SetCountLabel.Visibility = Visibility.Hidden;
-                        RepCountBox.Visibility = Visibility.Hidden;
-                        RepCountLabel.Visibility = Visibility.Hidden;
-                        FinishWorkout.Visibility = Visibility.Hidden;
+                        
                         break;
 
                     case GamePhase.Instrucitons:
@@ -818,18 +590,13 @@ namespace PantomimeDemo
 
                     case GamePhase.Exercise:
                         this._InstructionPosition = 0;
+                        ScanBarcode.Visibility = Visibility.Hidden;
+                        HandElement.Visibility = Visibility.Visible;
+                        MenuCanvas.Visibility = Visibility.Collapsed;
                         VidFeed.Visibility = Visibility.Visible;
                         DisplayArea.Visibility = Visibility.Visible;
-                        ScanBarcode.Visibility = Visibility.Hidden;
-                        HandElement.Visibility = Visibility.Hidden;
-                        BicepCurlBox.Visibility = Visibility.Hidden;
-                        LateralRaiseBox.Visibility = Visibility.Hidden;
-                        LaunchDashboard.Visibility = Visibility.Hidden;
-                        SetCountBox.Visibility = Visibility.Visible;
-                        SetCountLabel.Visibility = Visibility.Visible;
-                        RepCountBox.Visibility = Visibility.Visible;
-                        RepCountLabel.Visibility = Visibility.Visible;
-                        FinishWorkout.Visibility = Visibility.Visible;
+
+                        WorkoutCanvas.Visibility = Visibility.Visible;
                         break;
                 }
             }

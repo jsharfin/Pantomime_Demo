@@ -53,13 +53,16 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+
         </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Center" Grid.Row="1"  Width="700">
-            <TextBlock x:Name="BicepCurlBox" Margin="441,50,100,5" Background="Coral"   TextWrapping="Wrap"  Height="50" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Visibility="Hidden" Padding="15"><Run Text="Bicep Curl"/></TextBlock>
-            <TextBlock x:Name="LaunchDashboard"  TextWrapping="Wrap" FontFamily="=Trebuchet MS" FontSize="18.667" TextAlignment="Center" Background="Violet" Margin="441,25,100,0" Padding="15" Visibility="Hidden" Height="53"><Run Text="Dashboard"/></TextBlock>
-            <TextBlock x:Name="LateralRaiseBox" Margin="100,-210,441,5" Background="Aquamarine" Height="50"  TextWrapping="Wrap" Text="Lateral Raise"  FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Visibility="Hidden" Padding="15"/>
-            <TextBlock x:Name="ScanBarcode" Margin="83,50,77.2,0"  Background="Gray"  Height="67" TextWrapping="Wrap" Width="187" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="20"><Run Text="Scan Barcode"/></TextBlock>
-        </StackPanel>
+
+        <Canvas x:Name="MenuCanvas" HorizontalAlignment="Center" Grid.Row="1"  Width="700" Visibility="Collapsed">
+            <TextBlock x:Name="BicepCurlBox" Background="Coral"   TextWrapping="Wrap"  Height="50" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center"  Padding="15" Canvas.Left="59" Canvas.Top="111" Width="138"><Run Text="Bicep Curl"/></TextBlock>
+            <TextBlock x:Name="LaunchDashboard"  TextWrapping="Wrap" FontFamily="=Trebuchet MS" FontSize="18.667" TextAlignment="Center" Background="Violet" Padding="15" Height="53" Canvas.Left="441" Canvas.Top="108"><Run Text="Dashboard"/></TextBlock>
+            <TextBlock x:Name="LateralRaiseBox" Background="Aquamarine" Height="50"  TextWrapping="Wrap" Text="Lateral Raise"  FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="15" Canvas.Left="59" Canvas.Top="29"/>
+        </Canvas>
+
+
         <Canvas x:Name="HandCanvas">
             <Image x:Name ="HandElement" Source="Images/hand.png" Height="29" Width="30" Visibility="Visible" Canvas.Left="114" Canvas.Top="176" RenderTransformOrigin="2.207,1.319">
                 <Image.RenderTransform>
@@ -78,21 +81,27 @@
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
         </DockPanel>
         <Viewbox x:Name="MainField" Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center">
-            <Grid>
+            <Grid x:Name="WorkoutCanvas" Visibility="Collapsed">
                 <Image x:Name="VidFeed" Width="640" Height="480"/>
-                <Image x:Name="DisplayArea" Width="640" Height="480" Margin="-8,1,9.6,1.4"/>
-                <TextBlock x:Name="SetCountLabel" Visibility="Hidden" Margin="0,55,10,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="110" Height="36" Text="Set" FontFamily="Tahoma" FontSize="32"/>
-                <TextBox x:Name="SetCountBox" Visibility="Hidden" Background="Transparent" Foreground="DarkGreen" Height="38" Margin="0,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0" FontFamily="Tahoma" FontSize="33.333"/>
-                <TextBlock x:Name="RepCountLabel" Visibility="Hidden" HorizontalAlignment="Right" Margin="0,163,0,0" TextWrapping="Wrap" Text="Reps" VerticalAlignment="Top" Height="37" Width="120" FontFamily="Tahoma" FontSize="32"/>
-                <TextBox x:Name="RepCountBox" Visibility="Hidden" Background="Transparent" Foreground="DarkGreen" Height="42" Margin="0,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0"  FontFamily="Tahoma" FontSize="33.333"/>
-                <TextBlock x:Name="FinishWorkout" Visibility="Hidden"    Background="Red" Foreground="White" FontFamily="Tahoma" FontSize="33.333" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,0,46.6,0" Height="44" Width="198" Text="End Workout"/>
+                <Image x:Name="DisplayArea" Width="640" Height="480" Margin="-8,1,10,1" HorizontalAlignment="Right"/>
+                <TextBlock x:Name="SetCountLabel"  Margin="0,55,10,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="110" Height="36" Text="Set" FontFamily="Tahoma" FontSize="32"/>
+                <TextBox x:Name="SetCountBox"  Background="Transparent" Foreground="DarkGreen" Height="38" Margin="0,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0" FontFamily="Tahoma" FontSize="33.333"/>
+                <TextBlock x:Name="RepCountLabel"  HorizontalAlignment="Right" Margin="0,163,0,0" TextWrapping="Wrap" Text="Reps" VerticalAlignment="Top" Height="37" Width="120" FontFamily="Tahoma" FontSize="32"/>
+                <TextBox x:Name="RepCountBox"  Background="Transparent" Foreground="DarkGreen" Height="42" Margin="0,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0"  FontFamily="Tahoma" FontSize="33.333"/>
+                <TextBlock x:Name="FinishWorkout"  Background="Red" Foreground="White" FontFamily="Tahoma" FontSize="33.333" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,0,46.6,0" Height="44" Width="198" Text="End Workout"/>
             </Grid>
         </Viewbox>
+        
+        
+        
+        
         <CheckBox Grid.Row="2" Style="{StaticResource SquareCheckBox}" Content="Seated Mode" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10 10 10" x:Name="checkBoxSeatedMode" Checked="CheckBoxSeatedModeChanged" Unchecked="CheckBoxSeatedModeChanged"/>
         <StatusBar Grid.Row="3" HorizontalAlignment="Stretch" x:Name="statusBar" VerticalAlignment="Bottom" Background="White" Foreground="{StaticResource MediumGreyBrush}">
             <StatusBarItem Padding="0 0 0 10">
                 <TextBlock x:Name="statusBarText" Margin="-1 0 0 0"><Run Text="Click 'Seated' to change skeletal pipeline type!"/></TextBlock>
             </StatusBarItem>
         </StatusBar>
+        
+        <TextBlock x:Name="ScanBarcode" Margin="260,165,293,138"  Background="Gray"  Height="67" TextWrapping="Wrap" Width="187" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="20" Grid.Row="1"><Run Text="Scan Barcode"/></TextBlock>
     </Grid>
 </Window>
