@@ -16,7 +16,7 @@ namespace PantomimeDemo
     using System.Windows.Data;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
-    using PQScan.BarcodeScanner;
+    //using PQScan.BarcodeScanner;
 
     public enum GamePhase
     {
