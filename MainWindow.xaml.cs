@@ -51,6 +51,7 @@ namespace PantomimeDemo
         private byte _AngExEnd;
         private Boolean _ExState;
         private int dashCount;
+        private JointType primeHandType = JointType.HandLeft;
 
         /// <summary>
         /// Reserved for 
@@ -312,8 +313,8 @@ namespace PantomimeDemo
 
             else
                 {
-
-                    TrackHand(primeSkeleton.Joints[JointType.HandLeft], HandElement, layoutGrid);
+                    primeHandType = GetPrimaryHand(primeSkeleton).JointType;
+                    TrackHand(primeSkeleton.Joints[primeHandType], HandElement, layoutGrid);
 
                     switch (this._CurrentPhase)
                     {
@@ -327,7 +328,7 @@ namespace PantomimeDemo
 
                         case GamePhase.Exercise:
                             ProcessPlayerExercising(primeSkeleton, _CurrentExercise);
-                              if (GetHitTarget(primeSkeleton.Joints[JointType.HandLeft], FinishWorkout) != null)
+                              if (GetHitTarget(primeSkeleton.Joints[primeHandType], FinishWorkout) != null)
                            {
 
                             ChangePhase(GamePhase.StartScreen);
@@ -421,7 +422,7 @@ namespace PantomimeDemo
            
             _CurrentRep = 0;
             
-            if (GetHitTarget(skeleton.Joints[JointType.HandLeft],ScanBarcode) != null)
+            if (GetHitTarget(skeleton.Joints[primeHandType],ScanBarcode) != null)
             {
                 string fileName = "barcode.png";
 
@@ -461,7 +462,7 @@ namespace PantomimeDemo
 
             _CurrentRep = 0;
             //Determine if the user triggers the start of a new game
-            if (GetHitTarget(skeleton.Joints[JointType.HandLeft], BicepCurlBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], BicepCurlBox) != null)
+            if (GetHitTarget(skeleton.Joints[primeHandType], BicepCurlBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], BicepCurlBox) != null)
             {
                ChangePhase(GamePhase.Exercise);
                 _CurrentExercise = Exercise.BicepCurl;
@@ -470,7 +471,7 @@ namespace PantomimeDemo
 
             }
 
-            else if (GetHitTarget(skeleton.Joints[JointType.HandLeft], LateralRaiseBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], LateralRaiseBox) != null)
+            else if (GetHitTarget(skeleton.Joints[primeHandType], LateralRaiseBox) != null) //|| GetHitTarget(skeleton.Joints[JointType.HandRight], LateralRaiseBox) != null)
             {
                 ChangePhase(GamePhase.Exercise);
                 _CurrentExercise = Exercise.LateralRaise;
@@ -478,7 +479,7 @@ namespace PantomimeDemo
                 ProcessPlayerExercising(skeleton, _CurrentExercise);
             }
 
-            else if((GetHitTarget(skeleton.Joints[JointType.HandLeft], LaunchDashboard) != null) && dashCount < 1)
+            else if((GetHitTarget(skeleton.Joints[primeHandType], LaunchDashboard) != null) && dashCount < 1)
             {
                 System.Diagnostics.Process.Start("http://danielfeusse.com/Cornell-StartupStudio-Client/testapp/daypage.html");
                 dashCount++;
@@ -513,6 +514,34 @@ namespace PantomimeDemo
             point.Y *= (int)grid.ActualHeight / sensor.DepthStream.FrameHeight;
 
             return new Point(point.X, point.Y);
+        }
+
+
+        private static Joint GetPrimaryHand(Skeleton skeleton)
+        {
+            Joint primaryHand = new Joint();
+
+            if(skeleton != null)
+            {
+                primaryHand = skeleton.Joints[JointType.HandLeft];
+                Joint rightHand = skeleton.Joints[JointType.HandRight];
+
+                if(rightHand.TrackingState != JointTrackingState.NotTracked)
+                {
+                    if(primaryHand.TrackingState == JointTrackingState.NotTracked)
+                    {
+                        primaryHand = rightHand;
+                    }
+                    else
+                    {
+                        if(primaryHand.Position.Z > rightHand.Position.Z)
+                        {
+                            primaryHand = rightHand;
+                        }
+                    }
+                }
+            }
+            return primaryHand;
         }
 
         /// <summary>
