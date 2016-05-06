@@ -11,6 +11,9 @@
         <Style TargetType="{x:Type Image}">
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
+        <Style x:Key="tbstyle" TargetType="{x:Type TextBlock}">
+            <!-- put setters here -->
+        </Style>
         <Style TargetType="{x:Type CheckBox}" x:Key="SquareCheckBox" >
             <Setter Property="Template">
                 <Setter.Value>
@@ -56,15 +59,71 @@
 
         </Grid.RowDefinitions>
 
-        <Canvas x:Name="MenuCanvas" HorizontalAlignment="Center" Grid.Row="1"  Width="700" Visibility="Collapsed">
-            <TextBlock x:Name="BicepCurlBox" Background="Coral"   TextWrapping="Wrap"  Height="50" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center"  Padding="15" Canvas.Left="59" Canvas.Top="111" Width="138"><Run Text="Bicep Curl"/></TextBlock>
-            <TextBlock x:Name="LaunchDashboard"  TextWrapping="Wrap" FontFamily="=Trebuchet MS" FontSize="18.667" TextAlignment="Center" Background="Violet" Padding="15" Height="53" Canvas.Left="441" Canvas.Top="108"><Run Text="Dashboard"/></TextBlock>
-            <TextBlock x:Name="LateralRaiseBox" Background="Aquamarine" Height="50"  TextWrapping="Wrap" Text="Lateral Raise"  FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="15" Canvas.Left="59" Canvas.Top="29"/>
+        <Canvas x:Name="MenuCanvas" HorizontalAlignment="Center" Grid.Row="1" Visibility="Collapsed" Width="740" >
+            <Canvas.Resources>
+                <Style BasedOn="{StaticResource tbstyle}" TargetType="{x:Type TextBlock}" />
+            </Canvas.Resources>
+            <TextBlock x:Name="BicepCurlBox" Background="Coral"   TextWrapping="Wrap"  Height="50" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center"  Padding="15" Canvas.Left="370" Canvas.Top="82.5" Width="138"><Run Text="Bicep Curl"/></TextBlock>
+            <Border BorderThickness="2
+                    " BorderBrush="Black" Canvas.Left="27" Canvas.Top="184.5" Height="47">
+
+                <TextBlock x:Name="LaunchDashboard"  TextWrapping="Wrap" FontFamily="Segoe UI Semibold" FontSize="18.667" TextAlignment="Center" Padding="15" Width="134.499" Margin="0,-8,0,-10" RenderTransformOrigin="0.5,0.5"  Text="Dashboard"  >
+                    <TextBlock.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-0.001"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </TextBlock.RenderTransform></TextBlock>
+            </Border>
+            <TextBlock x:Name="LateralRaiseBox" Background="Aquamarine" Height="50"  TextWrapping="Wrap" Text="Lateral Raise"  FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="15" Canvas.Left="205.5" Canvas.Top="82.5"/>
+            <Image x:Name="ProfilePhoto"  Source="Images/profilephoto.jpg" Height="134" Canvas.Left="27" Canvas.Top="29" Width="130"/>
+            <TextBlock x:Name="ExerciseBox"  TextWrapping="Wrap" FontFamily="Segoe UI Semibold" FontSize="22" TextAlignment="Center" Padding="15" Width="134.499" RenderTransformOrigin="0.5,0.5"  Text="Exercises"  Height="61" Canvas.Left="176" Canvas.Top="16.5"  >
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0.001"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform></TextBlock>
+            <TextBlock x:Name="LegsBox" Background="#FF5058FF"   TextWrapping="Wrap"  Height="50" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center"  Padding="15" Canvas.Left="538" Canvas.Top="82.5" Width="138" Text="Legs"/>
+            <TextBlock x:Name="ExCount1"  TextWrapping="Wrap" FontFamily="Arial Black" FontSize="52" TextAlignment="Center" Padding="15" Width="134.499" RenderTransformOrigin="0.483,-0.254"  Text="65"  Height="76" Canvas.Left="204.5" Canvas.Top="129"  >
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0.001"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform></TextBlock>
+            <TextBlock x:Name="ExCount2"  TextWrapping="Wrap" FontFamily="Arial Black" FontSize="52" TextAlignment="Center" Padding="15" Width="134.499" RenderTransformOrigin="0.483,-0.254"  Text="35"  Height="76" Canvas.Left="372.5" Canvas.Top="127.5"  >
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0.001"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform></TextBlock>
+            <TextBlock x:Name="ExCount3"  TextWrapping="Wrap" FontFamily="Arial Black" FontSize="52" TextAlignment="Center" Padding="15" Width="134.499" RenderTransformOrigin="0.483,-0.254"  Text="27"  Height="76" Canvas.Left="542" Canvas.Top="129"  >
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0.001"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform></TextBlock>
+            <Image x:Name="fig1"  Source="Images/Donut1.PNG" Height="100" Canvas.Left="225" Canvas.Top="212" Width="90"/>
+            <Image x:Name="fig2"  Source="Images/Donut2.PNG" Height="100" Canvas.Left="395" Canvas.Top="212" Width="87"/>
+            <Image x:Name="fig3"  Source="Images/Donut3.PNG" Height="100" Canvas.Left="569" Canvas.Top="212" Width="79"/>
         </Canvas>
 
 
         <Canvas x:Name="HandCanvas">
-            <Image x:Name ="HandElement" Source="Images/hand.png" Height="29" Width="30" Visibility="Visible" Canvas.Left="114" Canvas.Top="176" RenderTransformOrigin="2.207,1.319">
+            <Image x:Name ="HandElement" Source="Images/hand.png" Height="29" Width="30" Visibility="Visible" Canvas.Left="218.3" Canvas.Top="252.307" RenderTransformOrigin="2.207,1.319">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -91,17 +150,17 @@
                 <TextBlock x:Name="FinishWorkout"  Background="Red" Foreground="White" FontFamily="Tahoma" FontSize="33.333" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,0,46.6,0" Height="44" Width="198" Text="End Workout"/>
             </Grid>
         </Viewbox>
-        
-        
-        
-        
+
+
+
+
         <CheckBox Grid.Row="2" Style="{StaticResource SquareCheckBox}" Content="Seated Mode" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10 10 10" x:Name="checkBoxSeatedMode" Checked="CheckBoxSeatedModeChanged" Unchecked="CheckBoxSeatedModeChanged"/>
         <StatusBar Grid.Row="3" HorizontalAlignment="Stretch" x:Name="statusBar" VerticalAlignment="Bottom" Background="White" Foreground="{StaticResource MediumGreyBrush}">
             <StatusBarItem Padding="0 0 0 10">
                 <TextBlock x:Name="statusBarText" Margin="-1 0 0 0"><Run Text="Click 'Seated' to change skeletal pipeline type!"/></TextBlock>
             </StatusBarItem>
         </StatusBar>
-        
-        <TextBlock x:Name="ScanBarcode" Margin="260,165,293,138"  Background="Gray"  Height="67" TextWrapping="Wrap" Width="187" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="20" Grid.Row="1"><Run Text="Scan Barcode"/></TextBlock>
+
+        <TextBlock x:Name="ScanBarcode" Margin="260,165,293,138" Visibility="Visible" Background="Gray"  Height="67" TextWrapping="Wrap" Width="187" FontFamily="Trebuchet MS" FontSize="18.667" TextAlignment="Center" Padding="20" Grid.Row="1"><Run Text="Scan Barcode"/></TextBlock>
     </Grid>
 </Window>
