@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Drawing.Imaging;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
+using System.Drawing.Drawing2D;
 using Microsoft.Kinect;
 namespace PantomimeDemo
 {
@@ -51,45 +43,51 @@ namespace PantomimeDemo
             this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight);
             this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight);
 
+
             // Render Joints
             foreach (Joint joint in skeleton.Joints)
             {
-                Brush drawBrush = null;
+                if(joint.JointType != JointType.Head)
+                {
 
-                if (joint.TrackingState == JointTrackingState.Tracked)
-                {
-                    drawBrush = this.trackedJointBrush;
-                }
-                else if (joint.TrackingState == JointTrackingState.Inferred)
-                {
-                    drawBrush = this.inferredJointBrush;
-                }
+                    Brush drawBrush = null;
 
-                if (drawBrush != null)
-                {
-                    Brush jointBrush = null;
-                    if (ReadyAngles[0] < 50)
+                    if (joint.TrackingState == JointTrackingState.Tracked)
                     {
-                        jointBrush = Brushes.LawnGreen;
+                        drawBrush = this.trackedJointBrush;
                     }
-                    else
+                    else if (joint.TrackingState == JointTrackingState.Inferred)
                     {
-                        jointBrush = Brushes.Red;
+                        drawBrush = this.inferredJointBrush;
                     }
-                    FormattedText RE = new FormattedText(ReadyAngles[0].ToString(), System.Globalization.CultureInfo.GetCultureInfo("en-us"), System.Windows.FlowDirection.LeftToRight, new Typeface("Tahoma"), 20, jointBrush);
-                    FormattedText LE = new FormattedText(ReadyAngles[2].ToString(), System.Globalization.CultureInfo.GetCultureInfo("en-us"), System.Windows.FlowDirection.LeftToRight, new Typeface("Tahoma"), 20, jointBrush);
-                    byte[] SequenceStart = { 255 };
-                    if (joint.JointType == JointType.ElbowRight)
+
+                    if (drawBrush != null)
                     {
-                        drawingContext.DrawText(RE, this.SkeletonPointToScreen(joint.Position));
-                    }
-                    else if (joint.JointType == JointType.ElbowLeft)
-                    {
-                        drawingContext.DrawText(LE, this.SkeletonPointToScreen(joint.Position));
-                    }
-                    else
-                    {
-                        drawingContext.DrawEllipse(drawBrush, null, this.SkeletonPointToScreen(joint.Position), JointThickness, JointThickness);
+                        Brush jointBrush = null;
+                        if (ReadyAngles[0] < 50)
+                        {
+                            jointBrush = Brushes.LawnGreen;
+                        }
+                        else
+                        {
+                            jointBrush = Brushes.Red;
+                        }
+                        FormattedText RE = new FormattedText(ReadyAngles[0].ToString(), System.Globalization.CultureInfo.GetCultureInfo("en-us"), System.Windows.FlowDirection.LeftToRight, new Typeface("Tahoma"), 20, jointBrush);
+                        FormattedText LE = new FormattedText(ReadyAngles[2].ToString(), System.Globalization.CultureInfo.GetCultureInfo("en-us"), System.Windows.FlowDirection.LeftToRight, new Typeface("Tahoma"), 20, jointBrush);
+
+                        byte[] SequenceStart = { 255 };
+                        if (joint.JointType == JointType.ElbowRight)
+                        {
+                            drawingContext.DrawText(RE, this.SkeletonPointToScreen(joint.Position));
+                        }
+                        else if (joint.JointType == JointType.ElbowLeft)
+                        {
+                            drawingContext.DrawText(LE, this.SkeletonPointToScreen(joint.Position));
+                        }
+                        else
+                        {
+                            drawingContext.DrawEllipse(drawBrush, null, this.SkeletonPointToScreen(joint.Position), JointThickness, JointThickness);
+                        }
                     }
                 }
             }
@@ -124,6 +122,7 @@ namespace PantomimeDemo
 
             // We assume all drawn bones are inferred unless BOTH joints are tracked
             Pen drawPen = this.inferredBonePen;
+
             if (joint0.TrackingState == JointTrackingState.Tracked && joint1.TrackingState == JointTrackingState.Tracked)
             {
                 drawPen = this.trackedBonePen;
@@ -131,6 +130,7 @@ namespace PantomimeDemo
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
+
 
         /// <summary>
         /// Process game state: Exercising

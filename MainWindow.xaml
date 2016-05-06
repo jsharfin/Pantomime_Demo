@@ -135,7 +135,7 @@
             </Image>
         </Canvas>
         <DockPanel Grid.Row="0">
-            <Image DockPanel.Dock="Left" Source="Images\pantomime.png" Stretch="Fill" Width="63" Margin="0,10,0,5.2"/>
+            <Image DockPanel.Dock="Left" Source="Images\logocolor.png" Stretch="Fill" Width="63" Margin="0,10,0,5.2"/>
             <TextBlock DockPanel.Dock="Right" Margin="0 0 -1 0" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18" Text="Exercise Demo"/>
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
         </DockPanel>
@@ -147,7 +147,7 @@
                 <TextBox x:Name="SetCountBox"  Background="Transparent" Foreground="DarkGreen" Height="38" Margin="0,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0" FontFamily="Tahoma" FontSize="33.333"/>
                 <TextBlock x:Name="RepCountLabel"  HorizontalAlignment="Right" Margin="0,163,0,0" TextWrapping="Wrap" Text="Reps" VerticalAlignment="Top" Height="37" Width="120" FontFamily="Tahoma" FontSize="32"/>
                 <TextBox x:Name="RepCountBox"  Background="Transparent" Foreground="DarkGreen" Height="42" Margin="0,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0"  FontFamily="Tahoma" FontSize="33.333"/>
-                <TextBlock x:Name="FinishWorkout"  Background="Red" Foreground="White" FontFamily="Tahoma" FontSize="33.333" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,0,46.6,0" Height="44" Width="198" Text="End Workout"/>
+                <TextBlock x:Name="FinishWorkout"  Background="Red" Foreground="White" FontFamily="Trebuchet MS" FontSize="32" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,0,0,0" Height="44" Width="198" Text="End Workout" TextAlignment="Center"/>
             </Grid>
         </Viewbox>
 

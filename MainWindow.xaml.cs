@@ -8,12 +8,9 @@ namespace PantomimeDemo
 {
     using System;
     using System.IO;
-    using System.Drawing.Imaging;
     using System.Windows;
     using System.Windows.Media;
-    using System.Windows.Media.Media3D;
     using System.Windows.Controls;
-    using System.Windows.Data;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     //using PQScan.BarcodeScanner;
@@ -108,6 +105,11 @@ namespace PantomimeDemo
         /// Pen used for drawing bones that are currently inferred
         /// </summary>        
         private readonly Pen inferredBonePen = new Pen(Brushes.Gray, 1);
+
+        /// <summary>
+        /// Pen used for drawing feedback lines
+        /// </summary>
+        private readonly Pen feedbackBonePen = new Pen(Brushes.Red, 2);
 
         /// <summary>
         /// Active Kinect sensor
