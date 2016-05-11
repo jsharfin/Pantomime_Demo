@@ -144,9 +144,9 @@
                 <Image x:Name="VidFeed" Width="640" Height="480"/>
                 <Image x:Name="DisplayArea" Width="640" Height="480" Margin="-8,1,10,1" HorizontalAlignment="Right"/>
                 <TextBlock x:Name="SetCountLabel"  Margin="0,55,10,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="110" Height="36" Text="Set" FontFamily="Tahoma" FontSize="32"/>
-                <TextBox x:Name="SetCountBox"  Background="Transparent" Foreground="DarkGreen" Height="38" Margin="0,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0" FontFamily="Tahoma" FontSize="33.333"/>
+                <TextBox x:Name="SetCountBox"  Background="White" Foreground="DarkGreen" Height="42" Margin="0,105,52,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="68" Text="0" FontFamily="Tahoma" FontSize="33.333"/>
                 <TextBlock x:Name="RepCountLabel"  HorizontalAlignment="Right" Margin="0,163,0,0" TextWrapping="Wrap" Text="Reps" VerticalAlignment="Top" Height="37" Width="120" FontFamily="Tahoma" FontSize="32"/>
-                <TextBox x:Name="RepCountBox"  Background="Transparent" Foreground="DarkGreen" Height="42" Margin="0,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Text="0"  FontFamily="Tahoma" FontSize="33.333"/>
+                <TextBox x:Name="RepCountBox"  Background="White" Foreground="DarkGreen" Height="42" Margin="0,205,52,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Right" Width="68" Text="0"  FontFamily="Tahoma" FontSize="33.333"/>
                 <TextBlock x:Name="FinishWorkout"  Background="Red" Foreground="White" FontFamily="Trebuchet MS" FontSize="32" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,0,0,0" Height="44" Width="198" Text="End Workout" TextAlignment="Center"/>
             </Grid>
         </Viewbox>
@@ -162,7 +162,7 @@
         </StatusBar>
 
         <Border x:Name="ScanBarcode" BorderThickness="2" BorderBrush="Black" Canvas.Left="27" Canvas.Top="184.5" Height="47" Margin="276,131,312,180" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Visible">
-            <TextBlock   TextWrapping="Wrap" FontFamily="Segoe UI Semibold" FontSize="18.667" TextAlignment="Center" Padding="15" Margin="3,-5,1,-13" RenderTransformOrigin="0.5,0.5"  Text="Scan Barcode"  >
+            <TextBlock   TextWrapping="Wrap" FontFamily="Segoe UI Semibold" FontSize="18.667" TextAlignment="Center" Padding="15" Margin="3,-5,1,-13" RenderTransformOrigin="0.5,0.5"  Text="Login"  >
                 <TextBlock.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
